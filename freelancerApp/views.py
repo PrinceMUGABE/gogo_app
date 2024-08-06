@@ -197,3 +197,8 @@ def approve_freelancer(request, pk):
     except Exception as e:
         logging.error(f"Exception occurred in approve_freelancer: {str(e)}")
         return Response({'detail': 'Internal Server Error'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    
+    
+    
+    

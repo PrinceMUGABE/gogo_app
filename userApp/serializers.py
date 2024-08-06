@@ -73,3 +73,20 @@ class CustomUserSerializer(serializers.ModelSerializer):
             address=validated_data['address']
         )
         return user
+
+
+
+class UpdateUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ['name', 'phone', 'address']
+
+    def validate_phone(self, value):
+        if not re.match(r'^(078|072|073|079)\d{7}$', value):
+            raise serializers.ValidationError("Phone number must be 10 digits and start with 078, 072, 073, or 079.")
+        return value
+
+    def validate_address(self, value):
+        if re.match(r'^[\d\W]', value):
+            raise serializers.ValidationError("Address cannot start with a number or special character.")
+        return value

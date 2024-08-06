@@ -9,7 +9,7 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.hashers import check_password
 from django.utils.timezone import now, timedelta
 from django.db.models import Count
-from .serializers import CustomUserSerializer
+from .serializers import CustomUserSerializer, UpdateUserSerializer
 from userApp.models import CustomUser
 import logging
 
@@ -69,7 +69,7 @@ def login(request):
 
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+# @permission_classes([IsAuthenticated])
 def get_user_by_id(request, user_id):
     try:
         user = CustomUser.objects.get(pk=user_id)
@@ -195,3 +195,30 @@ def reset_password(request):
 
 
 
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def update_user(request, id):
+    try:
+        user = CustomUser.objects.get(id=id)
+    except CustomUser.DoesNotExist:
+        return Response({'error': 'User not found.'}, status=status.HTTP_404_NOT_FOUND)
+    
+    serializer = UpdateUserSerializer(user, data=request.data, partial=True)
+    if serializer.is_valid():
+        serializer.save()
+        return Response({'message': 'User details updated successfully.'}, status=status.HTTP_200_OK)
+    else:
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def logout(request):
+    try:
+        refresh_token = request.data["refresh"]
+        token = RefreshToken(refresh_token)
+        token.blacklist()
+
+        return Response({'message': 'Logout successful.'}, status=status.HTTP_205_RESET_CONTENT)
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)

@@ -14,5 +14,7 @@ urlpatterns = [
     path('users/total/', views.get_total_users, name='get_total_users'),
     path('users/statistics/', views.user_growth_statistics, name='user_growth_statistics'),
     path('password/reset/', views.reset_password, name='reset_password'),
+    path('update/<int:id>', views.update_user, name='update_user'),  # New URL for updating a user
+    path('logout/', views.logout, name='logout'),  # New URL for logging out
 ]
 
