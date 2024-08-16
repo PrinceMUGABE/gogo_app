@@ -79,7 +79,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
 class UpdateUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ['name', 'phone', 'address']
+        fields = ['email', 'name', 'phone', 'role', 'address']
 
     def validate_phone(self, value):
         if not re.match(r'^(078|072|073|079)\d{7}$', value):
@@ -90,3 +90,9 @@ class UpdateUserSerializer(serializers.ModelSerializer):
         if re.match(r'^[\d\W]', value):
             raise serializers.ValidationError("Address cannot start with a number or special character.")
         return value
+
+    def update(self, instance, validated_data):
+        password = validated_data.pop('password', None)
+        if password:
+            instance.set_password(password)
+        return super().update(instance, validated_data)

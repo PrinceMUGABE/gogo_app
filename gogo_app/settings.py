@@ -95,21 +95,21 @@ import environ
 env = environ.Env()
 environ.Env.read_env()
 
-DATABASES = {
-    'default': dj_database_url.parse(env('DATABASE_URL'))
-}
-
 # DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'gogo_db',
-#         'USER': 'root',
-#         'PASSWORD': '',
-#         'HOST': 'localhost',
-#         'PORT': '3306',
-
-#     }
+#     'default': dj_database_url.parse(env('DATABASE_URL'))
 # }
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'gogo_db',
+        'USER': 'root',
+        'PASSWORD': '',
+        'HOST': 'localhost',
+        'PORT': '3306',
+
+    }
+}
 
 
 
