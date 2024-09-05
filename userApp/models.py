@@ -22,6 +22,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         ('admin', 'Admin'),
         ('freelancer', 'Freelancer'),
         ('shop_owner', 'Shop Owner'),
+        ('customer', 'Customer'),
     ]
     
     email = models.EmailField(unique=True)
@@ -32,7 +33,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     created_date = models.DateTimeField(default=timezone.now)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
-
+   
     objects = CustomUserManager()
 
     USERNAME_FIELD = 'email'
