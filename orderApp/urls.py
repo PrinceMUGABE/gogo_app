@@ -12,4 +12,10 @@ urlpatterns = [
     path('download/pdf/', views.download_orders_pdf, name='download_orders_pdf'),
     path('download/excel/', views.download_orders_excel, name='download_orders_excel'),
     path('download/csv/', views.download_orders_csv, name='download_orders_csv'),
+<<<<<<< HEAD
+=======
+    path('payments/', views.list_payments, name='list_payments'),
+    path('payments/<int:pk>/', views.get_payment_by_id, name='get_payment_by_id'),
+
+>>>>>>> 369378f (first commit)
 ]
