@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'discountApp',
     'trackingApp',
     'logistic_company',
-    # 'payment',
+    'payment',
 ]
 
 MIDDLEWARE = [
@@ -95,20 +95,20 @@ import environ
 env = environ.Env()
 environ.Env.read_env()
 
-# DATABASES = {
-#     'default': dj_database_url.parse(env('DATABASE_URL'))
-# }
-
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'gogo-app-DB',
-        'USER': 'postgres',
-        'PASSWORD': 'bahati',
-        'HOST': 'localhost',
-        'PORT': '5432',
-    }
+    'default': dj_database_url.parse(env('DATABASE_URL'))
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'gogo-app-DB',
+#         'USER': 'postgres',
+#         'PASSWORD': 'bahati',
+#         'HOST': 'localhost',
+#         'PORT': '5432',
+#     }
+# }
 
 # DATABASES = {
 #     'default': {

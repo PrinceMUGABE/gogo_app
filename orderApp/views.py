@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import io
 import pandas as pd
 from decimal import Decimal, ROUND_HALF_UP
@@ -14,7 +13,9 @@ from .serializers import OrderSerializer
 from paypack.client import HttpClient
 from paypack.transactions import Transaction
 from . serializers import PaymentSerializer
-=======
+from rest_framework.exceptions import ValidationError
+from decimal import InvalidOperation
+
 # orders/views.py
 
 from rest_framework import status, permissions
@@ -31,25 +32,26 @@ import io
 import pandas as pd
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
->>>>>>> 369378f (first commit)
 
 client_id = "85d99eae-4dc4-11ef-9da3-deade826d28d"
 client_secret = "c55cd366ead0e6d67d8eaef055a3a441da39a3ee5e6b4b0d3255bfef95601890afd80709"
 
-<<<<<<< HEAD
+# client_id = "8cd7e44c-758b-11ef-827e-dead742b0238"
+# client_secret = "f5d90e2ddffd2e52d2fc83fbcef9cb4cda39a3ee5e6b4b0d3255bfef95601890afd80709"
+# Initialize the Paypack client
+
+paypack_client = HttpClient(client_id=client_id, client_secret=client_secret)
+
+from rest_framework.exceptions import ValidationError
+from decimal import InvalidOperation
 
 # client_id = "8cd7e44c-758b-11ef-827e-dead742b0238"
 # client_secret = "f5d90e2ddffd2e52d2fc83fbcef9cb4cda39a3ee5e6b4b0d3255bfef95601890afd80709"
 # Initialize the Paypack client
 paypack_client = HttpClient(client_id=client_id, client_secret=client_secret)
 
-from rest_framework.exceptions import ValidationError
-from decimal import InvalidOperation
-
-=======
 paypack_client = HttpClient(client_id=client_id, client_secret=client_secret)
 
->>>>>>> 369378f (first commit)
 @api_view(['POST'])
 @permission_classes([permissions.IsAuthenticated])
 def create_order(request):
@@ -57,42 +59,14 @@ def create_order(request):
         data = request.data.copy()
         data['created_by'] = request.user.id
 
-<<<<<<< HEAD
-        # Check if required fields are provided
-        if 'vehicle_type' not in data:
-            raise ValidationError({"vehicle_type": "Vehicle type is required."})
-
-        if 'distance' not in data:
-            raise ValidationError({"distance": "Distance is required."})
-
-        # Validate vehicle type
-        try:
-            vehicle = get_object_or_404(Vehicle, id=data.get('vehicle_type'))
-        except Exception:
-            raise ValidationError({"vehicle_type": "Invalid vehicle type provided."})
-
-        # Validate and convert distance to Decimal
-        try:
-            distance = Decimal(data.get('distance'))
-        except (ValueError, InvalidOperation):
-            raise ValidationError({"distance": "Invalid distance format. Must be a valid decimal number."})
-
-        # Calculate the total price based on distance and vehicle price per km
-        total_price = (vehicle.price_per_km * distance).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
-
-        # Ensure total price meets the minimum amount required by Paypack
-=======
         vehicle = get_object_or_404(Vehicle, id=data.get('vehicle_type'))
         distance = Decimal(data.get('distance'))
-        total_price = (vehicle.price_per_km * distance).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
->>>>>>> 369378f (first commit)
         min_amount = Decimal('100.00')
         if total_price < min_amount:
             total_price = min_amount
 
         data['total_price'] = total_price
 
-<<<<<<< HEAD
         # Validate phone number for payment
         phone_number = data.get('phone_number')
         if not phone_number:
@@ -129,7 +103,8 @@ def create_order(request):
                 'amount': total_price,
                 'provider': cashin_response.get('provider', ''),
                 'kind': cashin_response.get('kind', '')
-=======
+            }
+
         serializer = OrderSerializer(data=data)
         if serializer.is_valid():
             phone_number = data.get('phone_number')
@@ -154,14 +129,12 @@ def create_order(request):
                 'provider': cashin_response.get('provider'),
                 'kind': cashin_response.get('kind'),
                 'created_at': cashin_response.get('created_at'),
->>>>>>> 369378f (first commit)
             }
             payment_serializer = PaymentSerializer(data=payment_data)
             if payment_serializer.is_valid():
                 payment_serializer.save()
             else:
-<<<<<<< HEAD
-                # Handle payment creation error
+            # Handle payment creation error
                 return Response(payment_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
             # Return the order response
@@ -176,14 +149,13 @@ def create_order(request):
         return Response({'detail': f"An unexpected error occurred: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-=======
-                return Response(payment_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(payment_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
         return Response({'detail': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
->>>>>>> 369378f (first commit)
 
 @api_view(['GET'])
 @permission_classes([permissions.IsAuthenticated])
@@ -206,10 +178,6 @@ def get_order_by_name(request, name):
     serializer = OrderSerializer(orders, many=True)
     return Response(serializer.data)
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 369378f (first commit)
 @api_view(['GET'])
 @permission_classes([permissions.IsAuthenticated])
 def get_orders_by_vehicle_type(request, vehicle_type_id):
@@ -233,19 +201,14 @@ def update_order(request, pk):
     try:
         order = get_object_or_404(Order, pk=pk)
         data = request.data.copy()
-<<<<<<< HEAD
 
         # Prevent changing the created_by field
         data['created_by'] = order.created_by.id
-
-=======
-        data['created_by'] = order.created_by.id
->>>>>>> 369378f (first commit)
+        
         serializer = OrderSerializer(order, data=data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
-<<<<<<< HEAD
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
@@ -255,11 +218,10 @@ def update_order(request, pk):
         return Response({'detail': f"An unexpected error occurred: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-=======
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
         return Response({'detail': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
->>>>>>> 369378f (first commit)
 
 @api_view(['GET'])
 @permission_classes([permissions.IsAuthenticated])
@@ -284,10 +246,6 @@ def download_orders_pdf(request):
     response['Content-Disposition'] = 'attachment; filename="all_orders.pdf"'
     return response
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 369378f (first commit)
 @api_view(['GET'])
 @permission_classes([permissions.IsAuthenticated])
 def download_orders_excel(request):
@@ -312,10 +270,7 @@ def download_orders_excel(request):
     response['Content-Disposition'] = 'attachment; filename="all_orders.xlsx"'
     return response
 
-<<<<<<< HEAD
 
-=======
->>>>>>> 369378f (first commit)
 @api_view(['GET'])
 @permission_classes([permissions.IsAuthenticated])
 def download_orders_csv(request):
@@ -338,8 +293,6 @@ def download_orders_csv(request):
     response = HttpResponse(buffer, content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="all_orders.csv"'
     return response
-<<<<<<< HEAD
-=======
 
 
 
@@ -377,4 +330,42 @@ def get_payment_by_id(request, pk):
     }
     
     return Response(payment_data_with_order, status=status.HTTP_200_OK)
->>>>>>> 369378f (first commit)
+@api_view(['GET'])
+@permission_classes([permissions.IsAuthenticated])
+def view_order_details(request, pk):
+    order = get_object_or_404(Order, pk=pk)
+
+    # Get user information
+    user = order.created_by
+    user_info = {
+        "name": user.name,
+        "email": user.email,
+        "role": user.role,  # Assuming your CustomUser has a role field
+        "phone": user.phone  # Assuming your CustomUser has a phone_number field
+    }
+
+    # Get vehicle information
+    vehicle = order.vehicle_type
+    vehicle_info = {
+        "type": vehicle.type,
+        "price_per_km": vehicle.price_per_km,
+    }
+
+    # Construct the response data
+    response_data = {
+        "id": order.id,
+        "payments": [PaymentSerializer(payment).data for payment in order.payments.all()],
+        "status": order.status,
+        "order_name": order.order_name,
+        "origin": order.origin,
+        "destination": order.destination,
+        "total_price": str(order.total_price),
+        "created_date": order.created_date.isoformat(),
+        "status": order.status,
+        "type": order.type,
+        "payment_status": order.payment_status,
+        "created_by": user_info,
+        "vehicle_info": vehicle_info,
+    }
+
+    return Response(response_data, status=status.HTTP_200_OK)

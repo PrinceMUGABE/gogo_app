@@ -1,8 +1,6 @@
-<<<<<<< HEAD
-=======
+
 # orders/models.py
 
->>>>>>> 369378f (first commit)
 from django.db import models
 from django.utils import timezone
 from userApp.models import CustomUser
@@ -32,9 +30,7 @@ class Order(models.Model):
 
     def __str__(self):
         return self.order_name
-<<<<<<< HEAD
-=======
-
+    
 class Payment(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='payments')  # Link to Order model
     ref = models.CharField(max_length=255, unique=True)  # Unique reference ID for the payment
@@ -46,4 +42,4 @@ class Payment(models.Model):
 
     def __str__(self):
         return f"Payment {self.ref} for Order {self.order.id}"
->>>>>>> 369378f (first commit)
+
